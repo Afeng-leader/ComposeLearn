@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 
 /**
  * 图片展示演示页面
@@ -234,25 +235,14 @@ fun ImageScreen() {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("实际项目中加载网络图片推荐使用 Coil 库:", style = MaterialTheme.typography.bodyMedium)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = """
-                        // build.gradle
-                        implementation("io.coil-kt:coil-compose:2.7.0")
-                        
-                        // 使用方式
-                        AsyncImage(
-                            model = "https://example.com/image.jpg",
-                            contentDescription = "描述",
-                            modifier = Modifier.size(200.dp),
-                            contentScale = ContentScale.Crop
-                        )
-                    """.trimIndent(),
-                    style = MaterialTheme.typography.bodySmall,
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                AsyncImage(
+                    model = "https://img2.baidu.com/it/u=2376489989,3127732063&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=657",
+                    contentDescription = "图片描述",
+                    modifier = Modifier.size(200.dp),
+                    contentScale = ContentScale.Crop
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(32.dp))
     }
 }

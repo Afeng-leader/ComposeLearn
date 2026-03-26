@@ -2,6 +2,7 @@ package com.example.composelearn.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.lazy.grid.*
@@ -13,7 +14,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 /**
  * 列表与网格演示页面
@@ -43,7 +47,12 @@ fun ListScreen() {
                 Tab(
                     selected = selectedTab == index,
                     onClick = { selectedTab = index },
-                    text = { Text(title) }
+                    text = {
+                        Text(
+                            text = title,
+                            maxLines = 1
+                        )
+                    }
                 )
             }
         }
@@ -97,7 +106,7 @@ private fun LazyColumnDemo() {
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             Text("↑ 以上使用 items()  |  ↓ 以下使用 itemsIndexed()")
         }
-
+        // 遍历列表，只取前 5 条数据
         itemsIndexed(items.take(5)) { index, item ->
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -223,55 +232,129 @@ private fun LazyGridDemo() {
     }
 }
 
-/** 分组列表演示 - stickyHeader */
+/**
+ * 分组列表演示 - stickyHeader + 右侧字母索引栏
+ *
+ * 实现要点：
+ * - LazyListState 控制列表的滚动位置（scrollToItem 是挂起函数，需要 CoroutineScope）
+ * - 字母索引栏需要计算每个 stickyHeader 在 LazyColumn 中的 item index：
+ *   第一个 item 是标题（index=0），之后每个分组占 1(stickyHeader) + names.size 个位置
+ * - 使用 weight(1f) 让 26 个字母均匀分布在右侧栏的可用高度内
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun GroupedListDemo() {
-    // 按首字母分组的数据
+
+    val originNames = listOf(
+        "Alice", "Bob", "Charlie", "David",
+        "Ella", "Frank", "Grace", "Henry",
+        "Iris", "Jack", "Katie", "Linda",
+        "Mike", "Nancy", "Oscar", "Peter",
+        "Queen", "Rose", "Sam", "Tom",
+        "Una", "Vivian", "Wendy", "Yoyo", "Zoro", "Doro"
+    )
+
     val groupedData = remember {
-        mapOf(
-            "A" to listOf("Android", "Apple", "Amazon"),
-            "B" to listOf("Baidu", "Bing", "ByteDance"),
-            "C" to listOf("ChatGPT", "Claude", "Copilot"),
-            "D" to listOf("Docker", "Django", "Dart"),
-            "G" to listOf("Google", "GitHub", "GitLab"),
-            "K" to listOf("Kotlin", "Kubernetes"),
-            "M" to listOf("Meta", "Microsoft", "MongoDB"),
-            "R" to listOf("React", "Redis", "Rust"),
-        )
+        originNames
+            .sortedBy { it }
+            .groupBy { name -> name.first().uppercase() }
+            .toSortedMap()
     }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 16.dp)
-    ) {
-        item {
-            Text(
-                "stickyHeader 吸顶分组",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
+    // LazyListState: 通过它可以程序化控制滚动位置
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
 
-        groupedData.forEach { (letter, names) ->
-            // stickyHeader 在滚动时会吸附在顶部
-            stickyHeader {
+    // 预计算每个字母对应的 item index，避免每次点击都重新遍历
+    val letterIndexMap = remember(groupedData) {
+        buildMap {
+            // 第一个 item 是标题 "stickyHeader 吸顶分组"，占 index=0
+            var index = 1
+            groupedData.forEach { (letter, names) ->
+                put(letter, index)
+                // 每个分组占位：1(stickyHeader) + names.size(列表项)
+                index += 1 + names.size
+            }
+        }
+    }
+
+    // 生成右侧A~Z 字母预览表
+    val alphabet = ('A'..'Z').toList()
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            state = listState,
+            // 右侧留出字母栏宽度，避免内容被遮挡
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 28.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
+        ) {
+            item {
                 Text(
-                    text = letter,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    "stickyHeader 吸顶分组",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(16.dp)
                 )
             }
-            items(names) { name ->
-                ListItem(
-                    headlineContent = { Text(name) },
-                    leadingContent = {
-                        Icon(Icons.Default.Circle, contentDescription = null, modifier = Modifier.size(8.dp))
-                    }
+            groupedData.forEach { (letter, names) ->
+                stickyHeader {
+                    Text(
+                        text = letter,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+                items(names) { name ->
+                    ListItem(
+                        headlineContent = { Text(name) },
+                        leadingContent = {
+                            Icon(Icons.Default.Circle, contentDescription = null, modifier = Modifier.size(8.dp))
+                        }
+                    )
+                }
+            }
+        }
+
+        // 右侧 A-Z 字母索引栏，靠右垂直居中排列
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .fillMaxHeight()
+                .width(28.dp)
+                .padding(vertical = 8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            alphabet.forEach { letter ->
+                val letterStr = letter.toString()
+                val hasGroup = letterStr in groupedData
+
+                Text(
+                    text = letterStr,
+                    fontSize = 11.sp,
+                    textAlign = TextAlign.Center,
+                    color = if (hasGroup)
+                        MaterialTheme.colorScheme.primary
+                    else
+                        MaterialTheme.colorScheme.outlineVariant,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .then(
+                            if (hasGroup) {
+                                Modifier.clickable {
+                                    val targetIndex = letterIndexMap[letterStr] ?: return@clickable
+                                    // animateScrollToItem 带平滑滚动动画
+                                    scope.launch { listState.animateScrollToItem(targetIndex) }
+                                }
+                            } else Modifier
+                        )
                 )
             }
         }

@@ -112,6 +112,19 @@ fun BasicLayoutScreen() {
                 Text("先padding\n再background", style = MaterialTheme.typography.labelSmall)
                 Box(
                     modifier = Modifier
+                        .border(1.dp, MaterialTheme.colorScheme.outline)
+                        .padding(16.dp)                         // ① 先留出外边距
+                        .background(Color(0xFFE57373))          // ② 再填充背景
+                ) {
+                    Text("内容", color = Color.White)
+                }
+            }
+            // 先 padding 再 background: padding 区域没有背景色
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("先padding\n再background\n再padding", style = MaterialTheme.typography.labelSmall)
+                Box(
+                    modifier = Modifier
+                        .border(1.dp, MaterialTheme.colorScheme.outline)
                         .padding(16.dp)                         // ① 先留出外边距
                         .background(Color(0xFFE57373))          // ② 再填充背景
                         .padding(16.dp)                         // ③ 内边距
@@ -124,6 +137,7 @@ fun BasicLayoutScreen() {
                 Text("先background\n再padding", style = MaterialTheme.typography.labelSmall)
                 Box(
                     modifier = Modifier
+                        .border(1.dp, MaterialTheme.colorScheme.outline)
                         .background(Color(0xFF64B5F6))          // ① 先填充背景
                         .padding(16.dp)                         // ② 再留出内边距（背景色已占满）
                 ) {
