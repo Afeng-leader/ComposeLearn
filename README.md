@@ -15,25 +15,30 @@ ComposeLearn/
 │   │   │   ├── Color.kt
 │   │   │   ├── Theme.kt
 │   │   │   └── Type.kt
-│   │   └── screens/                    # 18 个演示页面
+│   │   ├── components/                 # 公共 UI 组件
+│   │   │   └── SectionTitle.kt         # 统一章节标题样式
+│   │   └── screens/                    # 18 个演示页面（按难度分组）
 │   │       ├── HomeScreen.kt           # 首页导航目录
-│   │       ├── BasicLayoutScreen.kt    # 基础布局
-│   │       ├── TextScreen.kt           # 文本样式
-│   │       ├── ButtonScreen.kt         # 按钮类型
-│   │       ├── ImageScreen.kt          # 图片展示
-│   │       ├── StateScreen.kt          # 状态管理 ⭐
-│   │       ├── ListScreen.kt           # 列表与网格
-│   │       ├── FormScreen.kt           # 表单输入
-│   │       ├── ScaffoldScreen.kt       # Scaffold + Drawer 脚手架
-│   │       ├── AnimationScreen.kt      # 动画效果
-│   │       ├── ThemeScreen.kt          # 主题定制
-│   │       ├── DialogScreen.kt         # 对话框
-│   │       ├── ViewModelScreen.kt      # ViewModel ⭐
-│   │       ├── NetworkScreen.kt        # 网络请求 ⭐
-│   │       ├── PersistenceScreen.kt    # 数据持久化 ⭐
-│   │       ├── SideEffectScreen.kt     # 副作用 API ⭐
-│   │       ├── GestureScreen.kt        # 手势交互 ⭐
-│   │       └── PagerCanvasScreen.kt    # 翻页与自定义绘制 ⭐
+│   │       ├── basic/                  # 🟢 基础篇
+│   │       │   ├── BasicLayoutScreen.kt    # 基础布局
+│   │       │   ├── TextScreen.kt           # 文本样式
+│   │       │   ├── ButtonScreen.kt         # 按钮类型
+│   │       │   ├── ImageScreen.kt          # 图片展示
+│   │       │   └── StateScreen.kt          # 状态管理 ⭐
+│   │       ├── intermediate/           # 🟡 中级篇
+│   │       │   ├── ListScreen.kt           # 列表与网格（A-Z 索引栏）
+│   │       │   ├── FormScreen.kt           # 表单输入
+│   │       │   ├── ScaffoldScreen.kt       # Scaffold + Drawer 脚手架
+│   │       │   ├── AnimationScreen.kt      # 动画效果
+│   │       │   ├── ThemeScreen.kt          # 主题定制
+│   │       │   └── DialogScreen.kt         # 对话框
+│   │       └── advanced/               # 🔴 高级篇
+│   │           ├── ViewModelScreen.kt      # ViewModel ⭐
+│   │           ├── NetworkScreen.kt        # 网络请求 ⭐
+│   │           ├── PersistenceScreen.kt    # 数据持久化 ⭐
+│   │           ├── SideEffectScreen.kt     # 副作用 API ⭐
+│   │           ├── GestureScreen.kt        # 手势交互 ⭐
+│   │           └── PagerCanvasScreen.kt    # 翻页与自定义绘制 ⭐
 │   ├── viewmodel/
 │   │   ├── CounterViewModel.kt         # 计数器 VM（StateFlow 入门）
 │   │   ├── NetworkViewModel.kt         # 网络请求 VM（UiState 模式）
@@ -66,7 +71,7 @@ ComposeLearn/
 
 | # | 页面 | 核心知识点 | 对应传统 Android |
 |---|------|-----------|-----------------|
-| 6 | **列表与网格** | LazyColumn, LazyRow, LazyVerticalGrid, stickyHeader, items | RecyclerView, GridLayoutManager |
+| 6 | **列表与网格** | LazyColumn, LazyRow, LazyVerticalGrid, stickyHeader, items, A-Z 字母索引栏(awaitEachGesture) | RecyclerView, GridLayoutManager, SideIndex |
 | 7 | **表单输入** | TextField, Checkbox, Switch, RadioButton, Slider, DropdownMenu | EditText, CheckBox, Switch, SeekBar |
 | 8 | **Scaffold 脚手架** | Scaffold, TopAppBar, BottomBar, SnackbarHost, FAB, ModalNavigationDrawer | CoordinatorLayout, DrawerLayout, BottomNavigationView |
 | 9 | **动画效果** | animateXAsState, AnimatedVisibility, Crossfade, InfiniteTransition, updateTransition | ObjectAnimator, TransitionManager |

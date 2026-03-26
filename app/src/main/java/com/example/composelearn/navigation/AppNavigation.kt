@@ -4,7 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.composelearn.ui.screens.*
+import com.example.composelearn.ui.screens.HomeScreen
+import com.example.composelearn.ui.screens.basic.*
+import com.example.composelearn.ui.screens.intermediate.*
+import com.example.composelearn.ui.screens.advanced.*
 
 /**
  * 定义应用的所有路由（Route）
